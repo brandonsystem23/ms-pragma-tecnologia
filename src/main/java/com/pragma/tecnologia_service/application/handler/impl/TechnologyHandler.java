@@ -1,0 +1,33 @@
+package com.pragma.tecnologia_service.application.handler.impl;
+
+import com.pragma.tecnologia_service.application.dto.request.TechnologyRequest;
+import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
+import com.pragma.tecnologia_service.application.handler.ITechnologyHandler;
+import com.pragma.tecnologia_service.application.mapper.TechnologyDtoMapper;
+import com.pragma.tecnologia_service.domain.api.ITechnologyRegisterServicePort;
+import com.pragma.tecnologia_service.domain.api.ITechnologyRetrieveServicePort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@Service
+@RequiredArgsConstructor
+public class TechnologyHandler implements ITechnologyHandler {
+
+    private final ITechnologyRegisterServicePort iTechnologyRegisterServicePort;
+    private final ITechnologyRetrieveServicePort iTechnologyRetrieveServicePort;
+    private final TechnologyDtoMapper technologyDtoMapper;
+
+    @Override
+    public Mono<TechnologyResponse> create(TechnologyRequest request) {
+        return iTechnologyRegisterServicePort.create(technologyDtoMapper.toCommand(request))
+                .map(technologyDtoMapper::toResponse);
+    }
+
+    @Override
+    public Flux<TechnologyResponse> list() {
+        return iTechnologyRetrieveServicePort.retrieve()
+                .map(technologyDtoMapper::toResponse);
+    }
+}
