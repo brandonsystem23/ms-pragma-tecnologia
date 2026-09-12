@@ -13,6 +13,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,6 +104,20 @@ class TechnologyPersistenceAdapterTest {
         StepVerifier.create(technologyPersistenceAdapter.list())
                 .expectNext(technology1)
                 .expectNext(technology2)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldFindExistingTechnologyIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        List<Long> existingIds = List.of(1L, 3L);
+
+        when(technologyRepository.findExistingIds(ids))
+                .thenReturn(Flux.fromIterable(existingIds));
+
+        StepVerifier.create(technologyPersistenceAdapter.findExistingIds(ids))
+                .expectNext(1L)
+                .expectNext(3L)
                 .verifyComplete();
     }
 }

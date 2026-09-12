@@ -1,6 +1,8 @@
 package com.pragma.tecnologia_service.infrastructure.input.rest;
 
+import com.pragma.tecnologia_service.application.dto.request.TechnologyIdsRequest;
 import com.pragma.tecnologia_service.application.dto.request.TechnologyRequest;
+import com.pragma.tecnologia_service.application.dto.response.TechnologyExistsByIdsResponse;
 import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
 import com.pragma.tecnologia_service.application.handler.ITechnologyHandler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,5 +39,15 @@ public class TechnologyController {
         log.info("Petición para listar todas las tecnologias");
 
         return iTechnologyHandler.list();
+    }
+
+    @PostMapping("/exists-by-ids")
+    @Operation(summary = "Consultar tecnologias existentes por ids",
+            description = "Retorna los ids de las tecnologias que existen. Requiere rol ADMINISTRADOR")
+    public Mono<TechnologyExistsByIdsResponse> existsByIds(@RequestBody TechnologyIdsRequest request) {
+
+        log.info("Petición para validar tecnologías por ids");
+
+        return iTechnologyHandler.existsByIds(request.ids());
     }
 }

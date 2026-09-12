@@ -1,8 +1,10 @@
 package com.pragma.tecnologia_service.application.handler.impl;
 
 import com.pragma.tecnologia_service.application.dto.request.TechnologyRequest;
+import com.pragma.tecnologia_service.application.dto.response.TechnologyExistsByIdsResponse;
 import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
 import com.pragma.tecnologia_service.application.mapper.TechnologyDtoMapper;
+import com.pragma.tecnologia_service.domain.api.ITechnologyExistsByIdsServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRegisterServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRetrieveServicePort;
 import com.pragma.tecnologia_service.domain.model.Technology;
@@ -16,6 +18,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +30,9 @@ class TechnologyHandlerTest {
 
     @Mock
     private ITechnologyRetrieveServicePort technologyRetrieveServicePort;
+
+    @Mock
+    private ITechnologyExistsByIdsServicePort iTechnologyExistsByIdsServicePort;
 
     @Mock
     private TechnologyDtoMapper technologyDtoMapper;
@@ -119,6 +126,40 @@ class TechnologyHandlerTest {
                 .expectErrorMatches(error ->
                         error instanceof RuntimeException &&
                                 error.getMessage().equals("error listando tecnologías"))
+                .verify();
+    }
+
+    @Test
+    void shouldReturnExistingTechnologyIds() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        List<Long> existingIds = List.of(1L, 3L);
+
+        TechnologyExistsByIdsResponse response = TechnologyExistsByIdsResponse.builder()
+                .existingIds(existingIds)
+                .build();
+
+        when(iTechnologyExistsByIdsServicePort.retrieveExistingIds(ids))
+                .thenReturn(Flux.fromIterable(existingIds));
+
+        StepVerifier.create(technologyHandler.existsByIds(ids))
+                .expectNext(response)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenExistsByIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(iTechnologyExistsByIdsServicePort.retrieveExistingIds(ids))
+                .thenReturn(Flux.error(
+                        new RuntimeException("error buscando tecnologías existentes")
+                ));
+
+        StepVerifier.create(technologyHandler.existsByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error buscando tecnologías existentes")
+                )
                 .verify();
     }
 }

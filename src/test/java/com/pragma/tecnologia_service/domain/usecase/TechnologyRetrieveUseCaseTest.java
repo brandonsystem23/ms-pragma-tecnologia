@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +54,36 @@ class TechnologyRetrieveUseCaseTest {
                 .expectErrorMatches(error ->
                         error instanceof RuntimeException &&
                                 error.getMessage().equals("error consultando tecnologías"))
+                .verify();
+    }
+
+    @Test
+    void shouldRetrieveExistingIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        List<Long> existingIds = List.of(1L, 3L);
+
+        when(technologyPersistencePort.findExistingIds(ids))
+                .thenReturn(Flux.fromIterable(existingIds));
+
+        StepVerifier.create(technologyRetrieveUseCase.retrieveExistingIds(ids))
+                .expectNext(1L)
+                .expectNext(3L)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenRetrieveExistingIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(technologyPersistencePort.findExistingIds(ids))
+                .thenReturn(Flux.error(
+                        new RuntimeException("error consultando IDs de tecnologías")
+                ));
+
+        StepVerifier.create(technologyRetrieveUseCase.retrieveExistingIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error consultando IDs de tecnologías"))
                 .verify();
     }
 }

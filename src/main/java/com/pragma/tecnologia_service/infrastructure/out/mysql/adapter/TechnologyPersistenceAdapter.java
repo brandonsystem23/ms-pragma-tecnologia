@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 
 @Slf4j
 @Component
@@ -37,5 +39,10 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
     public Flux<Technology> list() {
         return iTechnologyRepository.findAll()
                 .map(technologyEntityMapper::toDomain);
+    }
+
+    @Override
+    public Flux<Long> findExistingIds(List<Long> ids) {
+        return iTechnologyRepository.findExistingIds(ids);
     }
 }
