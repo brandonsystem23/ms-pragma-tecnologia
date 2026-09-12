@@ -1,6 +1,8 @@
 package com.pragma.tecnologia_service.infrastructure.input.rest;
 
+import com.pragma.tecnologia_service.application.dto.request.TechnologyIdsRequest;
 import com.pragma.tecnologia_service.application.dto.request.TechnologyRequest;
+import com.pragma.tecnologia_service.application.dto.response.TechnologyExistsByIdsResponse;
 import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
 import com.pragma.tecnologia_service.application.handler.ITechnologyHandler;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
@@ -85,6 +89,42 @@ class TechnologyControllerTest {
                 .expectErrorMatches(error ->
                         error instanceof RuntimeException &&
                                 error.getMessage().equals("error listando tecnologías"))
+                .verify();
+    }
+
+    @Test
+    void shouldReturnExistingTechnologyIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        TechnologyIdsRequest request = new TechnologyIdsRequest(ids);
+
+        TechnologyExistsByIdsResponse response = TechnologyExistsByIdsResponse.builder()
+                .existingIds(List.of(1L, 3L))
+                .build();
+
+        when(technologyHandler.existsByIds(ids))
+                .thenReturn(Mono.just(response));
+
+        StepVerifier.create(technologyController.existsByIds(request))
+                .expectNext(response)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenExistsByIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        TechnologyIdsRequest request = new TechnologyIdsRequest(ids);
+
+        when(technologyHandler.existsByIds(ids))
+                .thenReturn(Mono.error(
+                        new RuntimeException("error validando tecnologías por ids")
+                ));
+
+        StepVerifier.create(technologyController.existsByIds(request))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error validando tecnologías por ids"))
                 .verify();
     }
 }
