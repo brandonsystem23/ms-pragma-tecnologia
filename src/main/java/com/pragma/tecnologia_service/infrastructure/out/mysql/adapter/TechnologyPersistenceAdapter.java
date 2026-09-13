@@ -34,12 +34,6 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
     }
 
     @Override
-    public Flux<Technology> list() {
-        return iTechnologyRepository.findAll()
-                .map(technologyEntityMapper::toDomain);
-    }
-
-    @Override
     public Flux<Long> findExistingIds(List<Long> ids) {
         return iTechnologyRepository.findExistingIds(ids);
     }

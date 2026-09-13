@@ -82,54 +82,6 @@ class TechnologyHandlerTest {
     }
 
     @Test
-    void shouldListTechnologiesAndMapResponse() {
-        Technology technology1 = Technology.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        Technology technology2 = Technology.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        TechnologyResponse response1 = TechnologyResponse.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        TechnologyResponse response2 = TechnologyResponse.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        when(technologyRetrieveServicePort.retrieve()).thenReturn(Flux.just(technology1, technology2));
-        when(technologyDtoMapper.toResponse(technology1)).thenReturn(response1);
-        when(technologyDtoMapper.toResponse(technology2)).thenReturn(response2);
-
-        StepVerifier.create(technologyHandler.list())
-                .expectNext(response1)
-                .expectNext(response2)
-                .verifyComplete();
-    }
-
-    @Test
-    void shouldPropagateErrorWhenListFails() {
-        when(technologyRetrieveServicePort.retrieve())
-                .thenReturn(Flux.error(new RuntimeException("error listando tecnologías")));
-
-        StepVerifier.create(technologyHandler.list())
-                .expectErrorMatches(error ->
-                        error instanceof RuntimeException &&
-                                error.getMessage().equals("error listando tecnologías"))
-                .verify();
-    }
-
-    @Test
     void shouldReturnExistingTechnologyIds() {
         List<Long> ids = List.of(1L, 2L, 3L);
         List<Long> existingIds = List.of(1L, 3L);

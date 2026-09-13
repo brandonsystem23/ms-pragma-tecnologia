@@ -44,12 +44,6 @@ public class TechnologyHandler implements ITechnologyHandler {
     }
 
     @Override
-    public Flux<TechnologyResponse> list() {
-        return iTechnologyRetrieveServicePort.retrieve()
-                .map(technologyDtoMapper::toResponse);
-    }
-
-    @Override
     public Mono<TechnologyExistsByIdsResponse> existsByIds(List<Long> ids) {
         return iTechnologyExistsByIdsServicePort.retrieveExistingIds(ids)
                 .collectList()

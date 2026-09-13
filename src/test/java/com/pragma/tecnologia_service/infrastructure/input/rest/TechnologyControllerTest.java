@@ -58,39 +58,6 @@ class TechnologyControllerTest {
                 .verify();
     }
 
-    @Test
-    void shouldRetrieveTechnologiesSuccessfully() {
-        TechnologyResponse response1 = TechnologyResponse.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        TechnologyResponse response2 = TechnologyResponse.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        when(technologyHandler.list()).thenReturn(Flux.just(response1, response2));
-
-        StepVerifier.create(technologyController.retrieveTechnology())
-                .expectNext(response1)
-                .expectNext(response2)
-                .verifyComplete();
-    }
-
-    @Test
-    void shouldPropagateErrorWhenRetrieveFails() {
-        when(technologyHandler.list())
-                .thenReturn(Flux.error(new RuntimeException("error listando tecnologías")));
-
-        StepVerifier.create(technologyController.retrieveTechnology())
-                .expectErrorMatches(error ->
-                        error instanceof RuntimeException &&
-                                error.getMessage().equals("error listando tecnologías"))
-                .verify();
-    }
 
     @Test
     void shouldReturnExistingTechnologyIdsSuccessfully() {

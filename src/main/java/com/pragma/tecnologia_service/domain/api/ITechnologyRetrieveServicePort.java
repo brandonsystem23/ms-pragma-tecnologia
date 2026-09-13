@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface ITechnologyRetrieveServicePort {
 
-    Flux<Technology> retrieve();
-
     Flux<Technology> retrieveByIds(List<Long> ids);
 }

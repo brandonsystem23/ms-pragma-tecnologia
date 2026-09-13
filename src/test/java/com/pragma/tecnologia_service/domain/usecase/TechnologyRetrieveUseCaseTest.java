@@ -23,39 +23,6 @@ class TechnologyRetrieveUseCaseTest {
     @InjectMocks
     private TechnologyRetrieveUseCase technologyRetrieveUseCase;
 
-    @Test
-    void shouldRetrieveTechnologiesSuccessfully() {
-        Technology technology1 = Technology.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        Technology technology2 = Technology.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        when(technologyPersistencePort.list()).thenReturn(Flux.just(technology1, technology2));
-
-        StepVerifier.create(technologyRetrieveUseCase.retrieve())
-                .expectNext(technology1)
-                .expectNext(technology2)
-                .verifyComplete();
-    }
-
-    @Test
-    void shouldPropagateErrorWhenRetrieveFails() {
-        when(technologyPersistencePort.list())
-                .thenReturn(Flux.error(new RuntimeException("error consultando tecnologías")));
-
-        StepVerifier.create(technologyRetrieveUseCase.retrieve())
-                .expectErrorMatches(error ->
-                        error instanceof RuntimeException &&
-                                error.getMessage().equals("error consultando tecnologías"))
-                .verify();
-    }
 
     @Test
     void shouldRetrieveExistingIdsSuccessfully() {

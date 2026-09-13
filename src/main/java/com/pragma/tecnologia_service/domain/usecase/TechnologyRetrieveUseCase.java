@@ -15,11 +15,6 @@ public class TechnologyRetrieveUseCase implements ITechnologyRetrieveServicePort
     private final ITechnologyPersistencePort iTechnologyPersistencePort;
 
     @Override
-    public Flux<Technology> retrieve() {
-        return iTechnologyPersistencePort.list();
-    }
-
-    @Override
     public Flux<Long> retrieveExistingIds(List<Long> ids) {
         return iTechnologyPersistencePort.findExistingIds(ids);
     }

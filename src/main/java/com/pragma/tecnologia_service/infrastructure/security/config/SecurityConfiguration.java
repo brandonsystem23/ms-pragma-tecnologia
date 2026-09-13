@@ -60,7 +60,6 @@ public class SecurityConfiguration {
                                 "/v3/api-docs/**"
                         ).permitAll()
                         .pathMatchers("/api/v1/technology/create").hasRole(ADMIN)
-                        .pathMatchers("/api/v1/technology/list").hasRole(ADMIN)
                         .pathMatchers("/api/v1/technology/exists-by-ids").hasRole(ADMIN)
                         .pathMatchers("/api/v1/technology/by-ids").hasRole(ADMIN)
                         .anyExchange().authenticated()

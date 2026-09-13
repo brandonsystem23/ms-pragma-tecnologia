@@ -72,42 +72,6 @@ class TechnologyPersistenceAdapterTest {
     }
 
     @Test
-    void shouldListTechnologiesSuccessfully() {
-        TechnologyEntity entity1 = TechnologyEntity.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        TechnologyEntity entity2 = TechnologyEntity.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        Technology technology1 = Technology.builder()
-                .id(1L)
-                .name("Java")
-                .description("Lenguaje de programación")
-                .build();
-
-        Technology technology2 = Technology.builder()
-                .id(2L)
-                .name("Spring")
-                .description("Framework Java")
-                .build();
-
-        when(technologyRepository.findAll()).thenReturn(Flux.just(entity1, entity2));
-        when(technologyEntityMapper.toDomain(entity1)).thenReturn(technology1);
-        when(technologyEntityMapper.toDomain(entity2)).thenReturn(technology2);
-
-        StepVerifier.create(technologyPersistenceAdapter.list())
-                .expectNext(technology1)
-                .expectNext(technology2)
-                .verifyComplete();
-    }
-
-    @Test
     void shouldFindExistingTechnologyIdsSuccessfully() {
         List<Long> ids = List.of(1L, 2L, 3L);
         List<Long> existingIds = List.of(1L, 3L);
