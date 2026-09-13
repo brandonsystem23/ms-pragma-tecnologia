@@ -120,4 +120,43 @@ class TechnologyPersistenceAdapterTest {
                 .expectNext(3L)
                 .verifyComplete();
     }
+
+    @Test
+    void shouldFindTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L);
+
+        TechnologyEntity entity1 = TechnologyEntity.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        TechnologyEntity entity2 = TechnologyEntity.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        Technology technology1 = Technology.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        Technology technology2 = Technology.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        when(technologyRepository.findByIdIn(ids)).thenReturn(Flux.just(entity1, entity2));
+        when(technologyEntityMapper.toDomain(entity1)).thenReturn(technology1);
+        when(technologyEntityMapper.toDomain(entity2)).thenReturn(technology2);
+
+        StepVerifier.create(technologyPersistenceAdapter.findByIds(ids))
+                .expectNext(technology1)
+                .expectNext(technology2)
+                .verifyComplete();
+    }
+
 }
