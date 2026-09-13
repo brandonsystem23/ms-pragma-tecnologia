@@ -12,8 +12,6 @@ public interface ITechnologyPersistencePort {
 
     Mono<Boolean> existsByName(String name);
 
-    Flux<Technology> list();
-
     Flux<Long> findExistingIds(List<Long> ids);
 
     Flux<Technology> findByIds(List<Long> ids);

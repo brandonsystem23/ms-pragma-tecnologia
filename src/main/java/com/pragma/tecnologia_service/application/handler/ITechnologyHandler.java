@@ -12,8 +12,6 @@ public interface ITechnologyHandler {
 
     Mono<TechnologyResponse> create(TechnologyRequest request);
 
-    Flux<TechnologyResponse> list();
-
     Mono<TechnologyExistsByIdsResponse> existsByIds(List<Long> ids);
 
     Flux<TechnologyResponse> findByIds(List<Long> ids);

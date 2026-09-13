@@ -34,15 +34,6 @@ public class TechnologyController {
         return iTechnologyHandler.create(request);
     }
 
-    @GetMapping("/list")
-    @Operation(summary = "Listar tecnologias", description = "Listar tecnologias. Requiere rol ADMINISTRADOR")
-    public Flux<TechnologyResponse> retrieveTechnology() {
-
-        log.info("Petición para listar todas las tecnologias");
-
-        return iTechnologyHandler.list();
-    }
-
     @PostMapping("/exists-by-ids")
     @Operation(summary = "Consultar tecnologias existentes por ids",
             description = "Retorna los ids de las tecnologias que existen. Requiere rol ADMINISTRADOR")
