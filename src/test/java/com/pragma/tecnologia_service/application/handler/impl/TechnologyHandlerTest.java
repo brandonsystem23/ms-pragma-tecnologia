@@ -162,4 +162,58 @@ class TechnologyHandlerTest {
                 )
                 .verify();
     }
+
+    @Test
+    void shouldFindTechnologiesByIdsAndMapResponse() {
+        List<Long> ids = List.of(1L, 2L);
+
+        Technology technology1 = Technology.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        Technology technology2 = Technology.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        TechnologyResponse response1 = TechnologyResponse.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        TechnologyResponse response2 = TechnologyResponse.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        when(technologyRetrieveServicePort.retrieveByIds(ids))
+                .thenReturn(Flux.just(technology1, technology2));
+        when(technologyDtoMapper.toResponse(technology1)).thenReturn(response1);
+        when(technologyDtoMapper.toResponse(technology2)).thenReturn(response2);
+
+        StepVerifier.create(technologyHandler.findByIds(ids))
+                .expectNext(response1)
+                .expectNext(response2)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenFindByIdsFails() {
+        List<Long> ids = List.of(1L, 2L);
+
+        when(technologyRetrieveServicePort.retrieveByIds(ids))
+                .thenReturn(Flux.error(new RuntimeException("error buscando tecnologías por ids")));
+
+        StepVerifier.create(technologyHandler.findByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error buscando tecnologías por ids"))
+                .verify();
+    }
+
 }

@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -21,7 +20,6 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
 
     private final ITechnologyRepository iTechnologyRepository;
     private final TechnologyEntityMapper technologyEntityMapper;
-
 
     @Override
     public Mono<Technology> save(Technology technology) {
@@ -44,5 +42,11 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
     @Override
     public Flux<Long> findExistingIds(List<Long> ids) {
         return iTechnologyRepository.findExistingIds(ids);
+    }
+
+    @Override
+    public Flux<Technology> findByIds(List<Long> ids) {
+        return iTechnologyRepository.findByIdIn(ids)
+                .map(technologyEntityMapper::toDomain);
     }
 }

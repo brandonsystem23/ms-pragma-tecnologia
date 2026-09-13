@@ -14,12 +14,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BeanConfiguration {
 
-
     @Bean
     public DomainTechnologyValidator domainTechnologyValidator() {
         return new DomainTechnologyValidator();
     }
-
 
     @Bean
     public TechnologyValidator technologyValidator(ITechnologyPersistencePort iTechnologyPersistencePort) {
@@ -31,7 +29,6 @@ public class BeanConfiguration {
             ITechnologyPersistencePort iTechnologyPersistencePort,
             DomainTechnologyValidator domainTechnologyValidator,
             TechnologyValidator technologyValidator
-
     ) {
         return new TechnologyRegisterUseCase(
                 iTechnologyPersistencePort,
@@ -40,16 +37,17 @@ public class BeanConfiguration {
         );
     }
 
-    @Bean
-    public ITechnologyRetrieveServicePort technologyRetrieveUseCase(
+    @Bean(name = "technologyRetrieveServicePort")
+    public ITechnologyRetrieveServicePort technologyRetrieveServicePort(
             ITechnologyPersistencePort iTechnologyPersistencePort
-
     ) {
-        return new TechnologyRetrieveUseCase(
-                iTechnologyPersistencePort
-        );
+        return new TechnologyRetrieveUseCase(iTechnologyPersistencePort);
     }
 
-
-
+    @Bean(name = "technologyExistsByIdsServicePort")
+    public ITechnologyExistsByIdsServicePort technologyExistsByIdsServicePort(
+            ITechnologyPersistencePort iTechnologyPersistencePort
+    ) {
+        return new TechnologyRetrieveUseCase(iTechnologyPersistencePort);
+    }
 }

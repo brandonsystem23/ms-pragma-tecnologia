@@ -127,4 +127,43 @@ class TechnologyControllerTest {
                                 error.getMessage().equals("error validando tecnologías por ids"))
                 .verify();
     }
+
+    @Test
+    void shouldFindTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L);
+
+        TechnologyResponse response1 = TechnologyResponse.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        TechnologyResponse response2 = TechnologyResponse.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        when(technologyHandler.findByIds(ids)).thenReturn(Flux.just(response1, response2));
+
+        StepVerifier.create(technologyController.findByIds(ids))
+                .expectNext(response1)
+                .expectNext(response2)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenFindByIdsFails() {
+        List<Long> ids = List.of(1L, 2L);
+
+        when(technologyHandler.findByIds(ids))
+                .thenReturn(Flux.error(new RuntimeException("error obteniendo tecnologías por ids")));
+
+        StepVerifier.create(technologyController.findByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error obteniendo tecnologías por ids"))
+                .verify();
+    }
+
 }

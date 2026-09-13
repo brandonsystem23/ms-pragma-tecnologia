@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/technology")
 @RequiredArgsConstructor
@@ -49,5 +51,15 @@ public class TechnologyController {
         log.info("Petición para validar tecnologías por ids");
 
         return iTechnologyHandler.existsByIds(request.ids());
+    }
+
+    @GetMapping("/by-ids")
+    @Operation(summary = "Obtener tecnologias por ids",
+            description = "Retorna las tecnologías encontradas según la lista de ids. Requiere rol ADMINISTRADOR")
+    public Flux<TechnologyResponse> findByIds(@RequestParam List<Long> ids) {
+
+        log.info("Petición para obtener tecnologías por ids");
+
+        return iTechnologyHandler.findByIds(ids);
     }
 }

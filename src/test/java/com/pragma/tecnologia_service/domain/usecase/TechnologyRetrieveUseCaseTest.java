@@ -86,4 +86,44 @@ class TechnologyRetrieveUseCaseTest {
                                 error.getMessage().equals("error consultando IDs de tecnologías"))
                 .verify();
     }
+
+    @Test
+    void shouldRetrieveTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L);
+
+        Technology technology1 = Technology.builder()
+                .id(1L)
+                .name("Java")
+                .description("Lenguaje de programación")
+                .build();
+
+        Technology technology2 = Technology.builder()
+                .id(2L)
+                .name("Spring")
+                .description("Framework Java")
+                .build();
+
+        when(technologyPersistencePort.findByIds(ids))
+                .thenReturn(Flux.just(technology1, technology2));
+
+        StepVerifier.create(technologyRetrieveUseCase.retrieveByIds(ids))
+                .expectNext(technology1)
+                .expectNext(technology2)
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenRetrieveByIdsFails() {
+        List<Long> ids = List.of(1L, 2L);
+
+        when(technologyPersistencePort.findByIds(ids))
+                .thenReturn(Flux.error(new RuntimeException("error consultando tecnologías por ids")));
+
+        StepVerifier.create(technologyRetrieveUseCase.retrieveByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error consultando tecnologías por ids"))
+                .verify();
+    }
+
 }

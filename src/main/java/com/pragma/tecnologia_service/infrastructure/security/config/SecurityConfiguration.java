@@ -19,6 +19,8 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
+    private static final String ADMIN = "ADMINISTRADOR";
+
     private final JwtProvider jwtProvider;
     private final JsonAuthenticationEntryPoint jsonAuthenticationEntryPoint;
     private final JsonAccessDeniedHandler jsonAccessDeniedHandler;
@@ -57,8 +59,10 @@ public class SecurityConfiguration {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .pathMatchers("/api/v1/technology/create").hasRole("ADMINISTRADOR")
-                        .pathMatchers("/api/v1/technology/list").hasRole("ADMINISTRADOR")
+                        .pathMatchers("/api/v1/technology/create").hasRole(ADMIN)
+                        .pathMatchers("/api/v1/technology/list").hasRole(ADMIN)
+                        .pathMatchers("/api/v1/technology/exists-by-ids").hasRole(ADMIN)
+                        .pathMatchers("/api/v1/technology/by-ids").hasRole(ADMIN)
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)

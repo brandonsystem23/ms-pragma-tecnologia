@@ -19,4 +19,5 @@ public interface ITechnologyRepository extends ReactiveCrudRepository<Technology
         """)
     Flux<Long> findExistingIds(List<Long> ids);
 
+    Flux<TechnologyEntity> findByIdIn(List<Long> ids);
 }
