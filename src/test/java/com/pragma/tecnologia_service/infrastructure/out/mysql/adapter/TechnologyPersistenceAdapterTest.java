@@ -34,23 +34,27 @@ class TechnologyPersistenceAdapterTest {
         Technology technology = Technology.builder()
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         TechnologyEntity entity = TechnologyEntity.builder()
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         TechnologyEntity savedEntity = TechnologyEntity.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         Technology savedTechnology = Technology.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         when(technologyEntityMapper.toEntity(technology)).thenReturn(entity);
@@ -64,7 +68,7 @@ class TechnologyPersistenceAdapterTest {
 
     @Test
     void shouldCheckIfTechnologyExistsByName() {
-        when(technologyRepository.existsByName("Java")).thenReturn(Mono.just(true));
+        when(technologyRepository.existsByNameAndStatusTrue("Java")).thenReturn(Mono.just(true));
 
         StepVerifier.create(technologyPersistenceAdapter.existsByName("Java"))
                 .expectNext(true)
@@ -86,34 +90,38 @@ class TechnologyPersistenceAdapterTest {
     }
 
     @Test
-    void shouldFindTechnologiesByIdsSuccessfully() {
+    void shouldFindActiveTechnologiesByIdsSuccessfully() {
         List<Long> ids = List.of(1L, 2L);
 
         TechnologyEntity entity1 = TechnologyEntity.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         TechnologyEntity entity2 = TechnologyEntity.builder()
                 .id(2L)
                 .name("Spring")
                 .description("Framework Java")
+                .status(true)
                 .build();
 
         Technology technology1 = Technology.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         Technology technology2 = Technology.builder()
                 .id(2L)
                 .name("Spring")
                 .description("Framework Java")
+                .status(true)
                 .build();
 
-        when(technologyRepository.findByIdIn(ids)).thenReturn(Flux.just(entity1, entity2));
+        when(technologyRepository.findActiveByIdIn(ids)).thenReturn(Flux.just(entity1, entity2));
         when(technologyEntityMapper.toDomain(entity1)).thenReturn(technology1);
         when(technologyEntityMapper.toDomain(entity2)).thenReturn(technology2);
 
@@ -124,26 +132,26 @@ class TechnologyPersistenceAdapterTest {
     }
 
     @Test
-    void shouldDeleteTechnologiesByIdsSuccessfully() {
+    void shouldDisableTechnologiesByIdsSuccessfully() {
         List<Long> ids = List.of(1L, 2L, 3L);
 
-        when(technologyRepository.deleteByIds(ids)).thenReturn(Mono.just(3));
+        when(technologyRepository.disableByIds(ids)).thenReturn(Mono.just(3));
 
         StepVerifier.create(technologyPersistenceAdapter.deleteByIds(ids))
                 .verifyComplete();
     }
 
     @Test
-    void shouldPropagateErrorWhenDeleteByIdsFails() {
+    void shouldPropagateErrorWhenDisableByIdsFails() {
         List<Long> ids = List.of(1L, 2L, 3L);
 
-        when(technologyRepository.deleteByIds(ids))
-                .thenReturn(Mono.error(new RuntimeException("error eliminando tecnologías en repositorio")));
+        when(technologyRepository.disableByIds(ids))
+                .thenReturn(Mono.error(new RuntimeException("error desactivando tecnologías en repositorio")));
 
         StepVerifier.create(technologyPersistenceAdapter.deleteByIds(ids))
                 .expectErrorMatches(error ->
                         error instanceof RuntimeException &&
-                                error.getMessage().equals("error eliminando tecnologías en repositorio"))
+                                error.getMessage().equals("error desactivando tecnologías en repositorio"))
                 .verify();
     }
 }

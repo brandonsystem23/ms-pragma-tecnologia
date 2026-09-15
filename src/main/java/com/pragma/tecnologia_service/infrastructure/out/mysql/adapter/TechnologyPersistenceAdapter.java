@@ -30,7 +30,7 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
 
     @Override
     public Mono<Boolean> existsByName(String name) {
-        return iTechnologyRepository.existsByName(name);
+        return iTechnologyRepository.existsByNameAndStatusTrue(name);
     }
 
     @Override
@@ -40,12 +40,12 @@ public class TechnologyPersistenceAdapter implements ITechnologyPersistencePort 
 
     @Override
     public Flux<Technology> findByIds(List<Long> ids) {
-        return iTechnologyRepository.findByIdIn(ids)
+        return iTechnologyRepository.findActiveByIdIn(ids)
                 .map(technologyEntityMapper::toDomain);
     }
 
     @Override
     public Mono<Void> deleteByIds(List<Long> ids) {
-        return iTechnologyRepository.deleteByIds(ids).then();
+        return iTechnologyRepository.disableByIds(ids).then();
     }
 }

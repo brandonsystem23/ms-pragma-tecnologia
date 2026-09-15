@@ -9,6 +9,8 @@ public record TechnologyResponse(
 
         String name,
 
-        String description
+        String description,
+
+        Boolean status
 ) {
 }

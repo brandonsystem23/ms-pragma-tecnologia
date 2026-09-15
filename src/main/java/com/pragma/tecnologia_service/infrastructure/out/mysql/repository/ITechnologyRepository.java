@@ -11,21 +11,30 @@ import java.util.List;
 
 public interface ITechnologyRepository extends ReactiveCrudRepository<TechnologyEntity, Long> {
 
-    Mono<Boolean> existsByName(String name);
+    Mono<Boolean> existsByNameAndStatusTrue(String name);
 
     @Query("""
         SELECT id
         FROM technology
         WHERE id IN (:ids)
+          AND status = true
         """)
     Flux<Long> findExistingIds(List<Long> ids);
 
-    Flux<TechnologyEntity> findByIdIn(List<Long> ids);
+    @Query("""
+        SELECT id, name, description, status
+        FROM technology
+        WHERE id IN (:ids)
+          AND status = true
+        """)
+    Flux<TechnologyEntity> findActiveByIdIn(List<Long> ids);
 
     @Modifying
     @Query("""
-        DELETE FROM technology
+        UPDATE technology
+        SET status = false
         WHERE id IN (:ids)
+          AND status = true
         """)
-    Mono<Integer> deleteByIds(List<Long> ids);
+    Mono<Integer> disableByIds(List<Long> ids);
 }

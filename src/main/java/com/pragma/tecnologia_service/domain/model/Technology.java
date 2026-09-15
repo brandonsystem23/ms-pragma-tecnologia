@@ -16,4 +16,6 @@ public class Technology {
     String name;
 
     String description;
+
+    Boolean status;
 }

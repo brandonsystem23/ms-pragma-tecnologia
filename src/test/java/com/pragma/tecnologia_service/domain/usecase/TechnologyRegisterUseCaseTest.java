@@ -39,6 +39,7 @@ class TechnologyRegisterUseCaseTest {
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         doNothing().when(domainTechnologyValidator).validateUserCommand(command);
