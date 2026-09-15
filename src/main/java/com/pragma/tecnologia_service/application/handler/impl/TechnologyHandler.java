@@ -5,6 +5,7 @@ import com.pragma.tecnologia_service.application.dto.response.TechnologyExistsBy
 import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
 import com.pragma.tecnologia_service.application.handler.ITechnologyHandler;
 import com.pragma.tecnologia_service.application.mapper.TechnologyDtoMapper;
+import com.pragma.tecnologia_service.domain.api.ITechnologyDeleteServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyExistsByIdsServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRegisterServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRetrieveServicePort;
@@ -21,6 +22,7 @@ public class TechnologyHandler implements ITechnologyHandler {
     private final ITechnologyRegisterServicePort iTechnologyRegisterServicePort;
     private final ITechnologyRetrieveServicePort iTechnologyRetrieveServicePort;
     private final ITechnologyExistsByIdsServicePort iTechnologyExistsByIdsServicePort;
+    private final ITechnologyDeleteServicePort iTechnologyDeleteServicePort;
     private final TechnologyDtoMapper technologyDtoMapper;
 
     public TechnologyHandler(
@@ -29,11 +31,13 @@ public class TechnologyHandler implements ITechnologyHandler {
             ITechnologyRetrieveServicePort iTechnologyRetrieveServicePort,
             @Qualifier("technologyExistsByIdsServicePort")
             ITechnologyExistsByIdsServicePort iTechnologyExistsByIdsServicePort,
+            ITechnologyDeleteServicePort iTechnologyDeleteServicePort,
             TechnologyDtoMapper technologyDtoMapper
     ) {
         this.iTechnologyRegisterServicePort = iTechnologyRegisterServicePort;
         this.iTechnologyRetrieveServicePort = iTechnologyRetrieveServicePort;
         this.iTechnologyExistsByIdsServicePort = iTechnologyExistsByIdsServicePort;
+        this.iTechnologyDeleteServicePort = iTechnologyDeleteServicePort;
         this.technologyDtoMapper = technologyDtoMapper;
     }
 
@@ -56,5 +60,10 @@ public class TechnologyHandler implements ITechnologyHandler {
     public Flux<TechnologyResponse> findByIds(List<Long> ids) {
         return iTechnologyRetrieveServicePort.retrieveByIds(ids)
                 .map(technologyDtoMapper::toResponse);
+    }
+
+    @Override
+    public Mono<Void> deleteByIds(List<Long> ids) {
+        return iTechnologyDeleteServicePort.deleteByIds(ids);
     }
 }

@@ -123,4 +123,27 @@ class TechnologyPersistenceAdapterTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldDeleteTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(technologyRepository.deleteByIds(ids)).thenReturn(Mono.just(3));
+
+        StepVerifier.create(technologyPersistenceAdapter.deleteByIds(ids))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenDeleteByIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(technologyRepository.deleteByIds(ids))
+                .thenReturn(Mono.error(new RuntimeException("error eliminando tecnologías en repositorio")));
+
+        StepVerifier.create(technologyPersistenceAdapter.deleteByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error eliminando tecnologías en repositorio"))
+                .verify();
+    }
 }

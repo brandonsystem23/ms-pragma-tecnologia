@@ -15,4 +15,6 @@ public interface ITechnologyHandler {
     Mono<TechnologyExistsByIdsResponse> existsByIds(List<Long> ids);
 
     Flux<TechnologyResponse> findByIds(List<Long> ids);
+
+    Mono<Void> deleteByIds(List<Long> ids);
 }

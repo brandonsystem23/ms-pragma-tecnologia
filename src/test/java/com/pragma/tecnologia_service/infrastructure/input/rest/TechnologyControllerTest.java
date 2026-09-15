@@ -58,7 +58,6 @@ class TechnologyControllerTest {
                 .verify();
     }
 
-
     @Test
     void shouldReturnExistingTechnologyIdsSuccessfully() {
         List<Long> ids = List.of(1L, 2L, 3L);
@@ -133,4 +132,29 @@ class TechnologyControllerTest {
                 .verify();
     }
 
+    @Test
+    void shouldDeleteTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        TechnologyIdsRequest request = new TechnologyIdsRequest(ids);
+
+        when(technologyHandler.deleteByIds(ids)).thenReturn(Mono.empty());
+
+        StepVerifier.create(technologyController.deleteByIds(request))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenDeleteByIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+        TechnologyIdsRequest request = new TechnologyIdsRequest(ids);
+
+        when(technologyHandler.deleteByIds(ids))
+                .thenReturn(Mono.error(new RuntimeException("error eliminando tecnologías por ids")));
+
+        StepVerifier.create(technologyController.deleteByIds(request))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error eliminando tecnologías por ids"))
+                .verify();
+    }
 }

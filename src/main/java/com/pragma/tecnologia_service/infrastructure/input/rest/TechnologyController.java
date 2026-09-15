@@ -53,4 +53,14 @@ public class TechnologyController {
 
         return iTechnologyHandler.findByIds(ids);
     }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "Eliminar tecnologias por ids",
+            description = "Elimina todas las tecnologías encontradas según la lista de ids. Requiere rol ADMINISTRADOR")
+    public Mono<Void> deleteByIds(@RequestBody TechnologyIdsRequest request) {
+
+        log.info("Petición para eliminar tecnologías por ids");
+
+        return iTechnologyHandler.deleteByIds(request.ids());
+    }
 }

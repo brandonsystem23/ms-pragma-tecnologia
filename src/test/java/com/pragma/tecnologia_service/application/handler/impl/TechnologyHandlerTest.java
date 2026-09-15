@@ -4,6 +4,7 @@ import com.pragma.tecnologia_service.application.dto.request.TechnologyRequest;
 import com.pragma.tecnologia_service.application.dto.response.TechnologyExistsByIdsResponse;
 import com.pragma.tecnologia_service.application.dto.response.TechnologyResponse;
 import com.pragma.tecnologia_service.application.mapper.TechnologyDtoMapper;
+import com.pragma.tecnologia_service.domain.api.ITechnologyDeleteServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyExistsByIdsServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRegisterServicePort;
 import com.pragma.tecnologia_service.domain.api.ITechnologyRetrieveServicePort;
@@ -33,6 +34,9 @@ class TechnologyHandlerTest {
 
     @Mock
     private ITechnologyExistsByIdsServicePort iTechnologyExistsByIdsServicePort;
+
+    @Mock
+    private ITechnologyDeleteServicePort iTechnologyDeleteServicePort;
 
     @Mock
     private TechnologyDtoMapper technologyDtoMapper;
@@ -168,4 +172,27 @@ class TechnologyHandlerTest {
                 .verify();
     }
 
+    @Test
+    void shouldDeleteTechnologiesByIdsSuccessfully() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(iTechnologyDeleteServicePort.deleteByIds(ids)).thenReturn(Mono.empty());
+
+        StepVerifier.create(technologyHandler.deleteByIds(ids))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenDeleteByIdsFails() {
+        List<Long> ids = List.of(1L, 2L, 3L);
+
+        when(iTechnologyDeleteServicePort.deleteByIds(ids))
+                .thenReturn(Mono.error(new RuntimeException("error eliminando tecnologías por ids")));
+
+        StepVerifier.create(technologyHandler.deleteByIds(ids))
+                .expectErrorMatches(error ->
+                        error instanceof RuntimeException &&
+                                error.getMessage().equals("error eliminando tecnologías por ids"))
+                .verify();
+    }
 }
