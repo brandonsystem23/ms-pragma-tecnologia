@@ -52,12 +52,14 @@ class TechnologyHandlerTest {
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         TechnologyResponse response = TechnologyResponse.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         when(technologyDtoMapper.toCommand(request)).thenReturn(command);
@@ -127,24 +129,28 @@ class TechnologyHandlerTest {
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         Technology technology2 = Technology.builder()
                 .id(2L)
                 .name("Spring")
                 .description("Framework Java")
+                .status(true)
                 .build();
 
         TechnologyResponse response1 = TechnologyResponse.builder()
                 .id(1L)
                 .name("Java")
                 .description("Lenguaje de programación")
+                .status(true)
                 .build();
 
         TechnologyResponse response2 = TechnologyResponse.builder()
                 .id(2L)
                 .name("Spring")
                 .description("Framework Java")
+                .status(true)
                 .build();
 
         when(technologyRetrieveServicePort.retrieveByIds(ids))
@@ -173,7 +179,7 @@ class TechnologyHandlerTest {
     }
 
     @Test
-    void shouldDeleteTechnologiesByIdsSuccessfully() {
+    void shouldDisableTechnologiesByIdsSuccessfully() {
         List<Long> ids = List.of(1L, 2L, 3L);
 
         when(iTechnologyDeleteServicePort.deleteByIds(ids)).thenReturn(Mono.empty());
@@ -183,16 +189,16 @@ class TechnologyHandlerTest {
     }
 
     @Test
-    void shouldPropagateErrorWhenDeleteByIdsFails() {
+    void shouldPropagateErrorWhenDisableByIdsFails() {
         List<Long> ids = List.of(1L, 2L, 3L);
 
         when(iTechnologyDeleteServicePort.deleteByIds(ids))
-                .thenReturn(Mono.error(new RuntimeException("error eliminando tecnologías por ids")));
+                .thenReturn(Mono.error(new RuntimeException("error desactivando tecnologías por ids")));
 
         StepVerifier.create(technologyHandler.deleteByIds(ids))
                 .expectErrorMatches(error ->
                         error instanceof RuntimeException &&
-                                error.getMessage().equals("error eliminando tecnologías por ids"))
+                                error.getMessage().equals("error desactivando tecnologías por ids"))
                 .verify();
     }
 }

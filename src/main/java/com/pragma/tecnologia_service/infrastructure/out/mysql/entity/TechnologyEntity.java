@@ -21,5 +21,5 @@ public class TechnologyEntity {
 
     private String description;
 
-
+    private Boolean status;
 }
