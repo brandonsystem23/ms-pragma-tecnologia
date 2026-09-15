@@ -149,6 +149,28 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void shouldHandleRollbackInternalErrorDomainException() {
+        ResponseEntity<ErrorResponse> responseEntity =
+                globalExceptionHandler.handleDomainException(
+                        new DomainException(
+                                DomainErrorCode.INTERNAL_ERROR,
+                                "Ocurrió un error durante la eliminación transaccional de tecnologías. Se realizó rollback de la operación"
+                        ),
+                        serverWebExchange
+                );
+
+        ErrorResponse response = getBody(responseEntity);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.status());
+        assertEquals("Internal Server Error", response.error());
+        assertEquals("Ocurrió un error durante la eliminación transaccional de tecnologías. Se realizó rollback de la operación", response.message());
+        assertEquals("/api/v1/technology/create", response.path());
+        assertNotNull(response.timestamp());
+        assertEquals(List.of(), response.details());
+    }
+
+    @Test
     void shouldHandleIllegalArgument() {
         ResponseEntity<ErrorResponse> responseEntity =
                 globalExceptionHandler.handleIllegalArgument(
